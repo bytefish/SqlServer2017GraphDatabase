@@ -1,0 +1,8 @@
+Code,Description
+"0","Flight is not Diverted"
+"1","One Diverted Airport Landing"
+"2","Two Diverted Airport Landings"
+"3","Three Diverted Airport Landings"
+"4","Four Diverted Airport Landings"
+"5","Five Diverted Airport Landings"
+"9","Air Return to Origin Airport where the Flight was Ultimately Cancelled"
