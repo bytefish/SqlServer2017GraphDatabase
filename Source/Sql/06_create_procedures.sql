@@ -76,15 +76,11 @@ BEGIN
     FROM @TemporaryAirportTable airport;
 
     INSERT INTO inState
-    SELECT (SELECT $NODE_ID From Airport where airport.AirportID = AirportID), (SELECT $NODE_ID FROM State where Code = airport.StateCode)
+    SELECT airport.NodeID, (SELECT $NODE_ID FROM State where Code = airport.StateCode)
     FROM @TemporaryAirportTable airport;
 
     INSERT INTO inCountry
-    SELECT (SELECT $NODE_ID From Airport where airport.AirportID = AirportID), (SELECT $NODE_ID FROM Country where Name = airport.Country)
-    FROM @TemporaryAirportTable airport;
-
-    INSERT INTO inCountry
-    SELECT (SELECT $NODE_ID FROM City WHERE Name = airport.City), (SELECT $NODE_ID FROM Country where Name = airport.Country) 
+    SELECT airport.NodeID, (SELECT $NODE_ID FROM Country where Name = airport.Country)
     FROM @TemporaryAirportTable airport;
     
 END
