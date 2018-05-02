@@ -117,7 +117,7 @@ namespace AirlineOnTimePerformance.ConsoleApp
                 // As an Observable:
                 .ToObservable()
                 // Batch in 80000 Entities / or wait 1 Second:
-                .Buffer(TimeSpan.FromSeconds(5), 80000)
+                .Buffer(TimeSpan.FromSeconds(1), 80000)
                 // And subscribe to the Batch
                 .Subscribe(records =>
                 {
@@ -126,6 +126,8 @@ namespace AirlineOnTimePerformance.ConsoleApp
                         .Where(x => x.IsValid)
                         // And get the populated Entities:
                         .Select(x => x.Result)
+                        // Only use latest Airports:
+                        .Where(x => x.AirportIsLatest)
                         // Convert into the Sql Data Model:
                         .Select(x => converter.Convert(x))
                         // Evaluate:

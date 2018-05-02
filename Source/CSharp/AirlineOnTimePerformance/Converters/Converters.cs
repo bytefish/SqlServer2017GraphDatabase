@@ -80,8 +80,10 @@ namespace AirlineOnTimePerformance.Converters
             target.Abbr = source.AirportAbbr;
             target.Name = source.AirportName;
             target.City = source.AirportCityName;
-            target.State = source.AirportStateCode;
+            target.StateCode = source.AirportStateCode;
+            target.StateName = source.AirportStateName;
             target.Country = source.AirportCountryName;
+            target.CountryIsoCode = source.AirportCountryCodeISO;
         }
     }
 

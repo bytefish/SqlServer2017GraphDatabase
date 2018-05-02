@@ -13,8 +13,12 @@ namespace AirlineOnTimePerformance.Sql.Model
 
         public string City { get; set; }
 
-        public string State { get; set; }
+        public string StateCode { get; set; }
+
+        public string StateName { get; set; }
         
         public string Country { get; set; }
+
+        public string CountryIsoCode { get; set; }
     }
 }

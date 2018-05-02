@@ -8,7 +8,8 @@ BEGIN
 
     CREATE TABLE [Country] (
         [CountryID] [INTEGER] IDENTITY(1,1) PRIMARY KEY,
-        [Name] [NVARCHAR](255) NOT NULL
+        [Name] [NVARCHAR](255),
+		[IsoCode] [NVARCHAR](255)
     ) AS NODE;
     
 END
@@ -20,8 +21,9 @@ IF  NOT EXISTS
 BEGIN
 
     CREATE TABLE [State] (
-        [CountryID] [INTEGER] IDENTITY(1,1) PRIMARY KEY,
-        [Name] [NVARCHAR](255) NOT NULL
+        [StateID] [INTEGER] IDENTITY(1,1) PRIMARY KEY,
+		[Code] [NVARCHAR](255),
+        [Name] [NVARCHAR](255)
     ) AS NODE;
     
 END
@@ -35,7 +37,7 @@ BEGIN
 
     CREATE TABLE [City] (
         [CityID] [INTEGER] IDENTITY(1,1) PRIMARY KEY,
-        [Name] [NVARCHAR](255) NOT NULL
+        [Name] [NVARCHAR](255)
     ) AS NODE;
     
 END
@@ -52,8 +54,10 @@ BEGIN
         [Abbr] NVARCHAR(55),
         [Name] NVARCHAR(255),
         [City] NVARCHAR(255),
-        [State] NVARCHAR(255),
-        [Country] NVARCHAR(255)
+		[StateCode] NVARCHAR(255),
+        [StateName] NVARCHAR(255),
+        [Country] NVARCHAR(255),
+		[CountryIsoCode] NVARCHAR(255),
     ) AS NODE;
     
 END

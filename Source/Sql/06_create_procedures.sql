@@ -17,8 +17,10 @@ CREATE TYPE [AirportType] AS TABLE (
     [Abbr] [NVARCHAR](255),
     [Name] [NVARCHAR](255),
     [City] [NVARCHAR](255),
-    [State] [NVARCHAR](255),
-    [Country] [NVARCHAR](255)
+	[StateCode] [NVARCHAR](255),
+    [StateName] [NVARCHAR](255),
+    [Country] [NVARCHAR](255),
+	[CountryIsoCode] [NVARCHAR](255)
 );
 
 GO
@@ -32,58 +34,57 @@ BEGIN
 
     -- Insert missing City Nodes:
     INSERT INTO City
-    SELECT e.City
+    SELECT DISTINCT e.City
     FROM @Entities e 
-        LEFT JOIN City c on e.City = c.Name
-    WHERE c.Name IS NULL;
+	WHERE NOT EXISTS (select * from City c where c.Name = e.City)
 
     -- Insert missing State Nodes:
     INSERT INTO State
-    SELECT e.State
+    SELECT DISTINCT e.StateCode, e.StateName
     FROM @Entities e 
-        LEFT JOIN State s on e.State = s.Name
-    WHERE s.Name IS NULL;
+	WHERE NOT EXISTS (select * from State s where s.Name = e.StateName and s.Code = e.StateCode)
 
     -- Insert missing Country Nodes:
     INSERT INTO Country
-    SELECT e.Country
+    SELECT DISTINCT e.Country, e.CountryIsoCode
     FROM @Entities e 
-        LEFT JOIN Country c on e.Country = c.Name
-    WHERE c.Name IS NULL;
+	WHERE NOT EXISTS (select * from Country c where c.Name = e.Country)
     
-    -- Build the Temporary Table for Inserts:
+    -- Build the Temporary Staged Table for Inserts:
     DECLARE @TemporaryAirportTable Table(
         [AirportID] [INTEGER],
-        [NodeID] [NVARCHAR](1000),
+		[NodeID] [NVARCHAR](1000),
         [Airport] [NVARCHAR](255),
         [Abbr] [NVARCHAR](255),
         [Name] [NVARCHAR](255),
         [City] [NVARCHAR](255),
-        [State] [NVARCHAR](255),
-        [Country] [NVARCHAR](255)
+        [StateCode] [NVARCHAR](255),
+		[StateName] [NVARCHAR](255),
+        [Country] [NVARCHAR](255),
+		[CountryIsoCode] [NVARCHAR](255)
     );
     
     -- Insert into Temporary Table:
-    INSERT INTO Airport(Identifier, Abbr, Name, City, State, Country)
-    OUTPUT INSERTED.AirportID, INSERTED.$NODE_ID, INSERTED.Identifier, INSERTED.Abbr, INSERTED.Name, INSERTED.City, INSERTED.State, INSERTED.Country
+    INSERT INTO Airport(Identifier, Abbr, Name, City, StateCode, StateName, Country, CountryIsoCode)
+    OUTPUT INSERTED.AirportID, INSERTED.$NODE_ID, INSERTED.Identifier, INSERTED.Abbr, INSERTED.Name, INSERTED.City, INSERTED.StateCode, INSERTED.StateName, INSERTED.Country, INSERTED.CountryIsoCode
     INTO @TemporaryAirportTable
     SELECT * FROM @Entities;
     
     -- Build Relationships:
     INSERT INTO inCity
-    SELECT airport.NodeID, (SELECT $NODE_ID FROM City where Name = airport.Name)
+    SELECT airport.NodeID, (SELECT $NODE_ID FROM City where Name = airport.City)
     FROM @TemporaryAirportTable airport;
 
     INSERT INTO inState
-    SELECT airport.NodeID, (SELECT $NODE_ID FROM State where Name = airport.State)
+    SELECT (SELECT $NODE_ID From Airport where airport.AirportID = AirportID), (SELECT $NODE_ID FROM State where Code = airport.StateCode)
     FROM @TemporaryAirportTable airport;
 
     INSERT INTO inCountry
-    SELECT airport.NodeID, (SELECT $NODE_ID FROM City where Name = airport.Country)
+    SELECT (SELECT $NODE_ID From Airport where airport.AirportID = AirportID), (SELECT $NODE_ID FROM Country where Name = airport.Country)
     FROM @TemporaryAirportTable airport;
 
     INSERT INTO inCountry
-    SELECT (SELECT NodeID FROM City WHERE Name = airport.City), (SELECT $NODE_ID FROM City where Name = airport.Country) 
+    SELECT (SELECT $NODE_ID FROM City WHERE Name = airport.City), (SELECT $NODE_ID FROM Country where Name = airport.Country) 
     FROM @TemporaryAirportTable airport;
     
 END
@@ -250,8 +251,7 @@ BEGIN
     INSERT INTO Carrier(Code, Description)
     SELECT e.Code, e.Description
     FROM @Entities e 
-        LEFT JOIN Carrier c on e.Code = c.Code
-    WHERE c.Code IS NULL;
+	WHERE NOT EXISTS (select * from Carrier c where c.Code = e.Code)
 
 END
 GO

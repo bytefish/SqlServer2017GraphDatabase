@@ -63,12 +63,14 @@ namespace AirlineOnTimePerformance.Sql.Client
         {
         // Construct the Data Record with the MetaData:
         SqlDataRecord sdr = new SqlDataRecord(
-                new SqlMetaData("Identifier", SqlDbType.NVarChar, 55),
-                new SqlMetaData("Abbr", SqlDbType.NVarChar, 55),
-                new SqlMetaData("Name", SqlDbType.NVarChar, 55),
-                new SqlMetaData("City", SqlDbType.NVarChar, 55),
-                new SqlMetaData("State", SqlDbType.NVarChar, 55),
-                new SqlMetaData("Country", SqlDbType.NVarChar, 55)
+                new SqlMetaData("Identifier", SqlDbType.NVarChar, 255),
+                new SqlMetaData("Abbr", SqlDbType.NVarChar, 255),
+                new SqlMetaData("Name", SqlDbType.NVarChar, 255),
+                new SqlMetaData("City", SqlDbType.NVarChar, 255),
+                new SqlMetaData("StateCode", SqlDbType.NVarChar, 255),
+                new SqlMetaData("StateName", SqlDbType.NVarChar, 255),
+                new SqlMetaData("Country", SqlDbType.NVarChar, 255),
+                new SqlMetaData("CountryIsoCode", SqlDbType.NVarChar, 255)
             );
             
             // Now yield the Measurements in the Data Record:
@@ -78,8 +80,10 @@ namespace AirlineOnTimePerformance.Sql.Client
                 sdr.SetString(1, item.Abbr);
                 sdr.SetString(2, item.Name);
                 sdr.SetString(3, item.City);
-                sdr.SetString(4, item.State);
-                sdr.SetString(5, item.Country);
+                sdr.SetString(4, item.StateCode);
+                sdr.SetString(5, item.StateName);
+                sdr.SetString(6, item.Country);
+                sdr.SetString(7, item.CountryIsoCode);
 
                 yield return sdr;
             }
