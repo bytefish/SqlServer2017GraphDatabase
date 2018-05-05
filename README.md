@@ -347,3 +347,9 @@ Table 'Worktable'. Scan count 0, logical reads 0, physical reads 0, read-ahead r
 I am very impressed how fast the SQL Server 2017 Graph Database is! Querying for the Percentage of Flights delayed by Weather 
 took **530 Milliseconds** with the SQL Server 2017, while it took almost 30 Seconds with Neo4j. This makes me think, that something 
 in my Neo4j Cypher Queries is horribly wrong. I am open for any feedback or help with the Neo4j queries!
+
+[Nicole White]: https://nicolewhite.github.io/
+[Revolution Analytics dataset repository]: https://packages.revolutionanalytics.com/datasets/AirOnTime87to12/
+[TinyCsvParser]: https://github.com/bytefish/TinyCsvParser
+[Reactive Extensions]: https://github.com/Reactive-Extensions/Rx.NET
+[Airline On-Time Performance Dataset]: https://www.transtats.bts.gov/Tables.asp?DB_ID=120&DB_Name=Airline%20On-Time%20Performance%20Data&DB_Short_Name=On-Time
