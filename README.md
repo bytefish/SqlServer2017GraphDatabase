@@ -116,10 +116,10 @@ CREATE TYPE [AirportType] AS TABLE (
     [Abbr] [NVARCHAR](255),
     [Name] [NVARCHAR](255),
     [City] [NVARCHAR](255),
-	[StateCode] [NVARCHAR](255),
+    [StateCode] [NVARCHAR](255),
     [StateName] [NVARCHAR](255),
     [Country] [NVARCHAR](255),
-	[CountryIsoCode] [NVARCHAR](255)
+    [CountryIsoCode] [NVARCHAR](255)
 );
 
 GO
@@ -135,32 +135,32 @@ BEGIN
     INSERT INTO City
     SELECT DISTINCT e.City
     FROM @Entities e 
-	WHERE NOT EXISTS (select * from City c where c.Name = e.City)
+    WHERE NOT EXISTS (select * from City c where c.Name = e.City)
 
     -- Insert missing State Nodes:
     INSERT INTO State
     SELECT DISTINCT e.StateCode, e.StateName
     FROM @Entities e 
-	WHERE NOT EXISTS (select * from State s where s.Name = e.StateName and s.Code = e.StateCode)
+    WHERE NOT EXISTS (select * from State s where s.Name = e.StateName and s.Code = e.StateCode)
 
     -- Insert missing Country Nodes:
     INSERT INTO Country
     SELECT DISTINCT e.Country, e.CountryIsoCode
     FROM @Entities e 
-	WHERE NOT EXISTS (select * from Country c where c.Name = e.Country)
+    WHERE NOT EXISTS (select * from Country c where c.Name = e.Country)
     
     -- Build the Temporary Staged Table for Inserts:
     DECLARE @TemporaryAirportTable Table(
         [AirportID] [INTEGER],
-		[NodeID] [NVARCHAR](1000),
+        [NodeID] [NVARCHAR](1000),
         [Airport] [NVARCHAR](255),
         [Abbr] [NVARCHAR](255),
         [Name] [NVARCHAR](255),
         [City] [NVARCHAR](255),
         [StateCode] [NVARCHAR](255),
-		[StateName] [NVARCHAR](255),
+        [StateName] [NVARCHAR](255),
         [Country] [NVARCHAR](255),
-		[CountryIsoCode] [NVARCHAR](255)
+        [CountryIsoCode] [NVARCHAR](255)
     );
     
     -- Insert into Temporary Table:
@@ -277,16 +277,16 @@ SET STATISTICS IO ON
 
 SELECT Name, DelayedByWeather, Total, 100.0 * DelayedByWeather / Total as Percentage
 FROM 
-	(SELECT a.Name as Name, 
-		(SELECT Count(*)
-			FROM Flight, Airport, Reason, origin, delayedBy
-			WHERE MATCH(Airport<-(origin)-Flight-(delayedBy)->Reason)
-			AND Reason.Code = 'B'
-			AND Airport.Name = a.Name) as DelayedByWeather,
-		(SELECT COUNT(*)
-			FROM Flight, Airport, origin
-			WHERE MATCH(Flight-(origin)->Airport)
-			AND Airport.Name = a.Name) as Total
+    (SELECT a.Name as Name, 
+        (SELECT Count(*)
+            FROM Flight, Airport, Reason, origin, delayedBy
+            WHERE MATCH(Airport<-(origin)-Flight-(delayedBy)->Reason)
+            AND Reason.Code = 'B'
+            AND Airport.Name = a.Name) as DelayedByWeather,
+        (SELECT COUNT(*)
+            FROM Flight, Airport, origin
+            WHERE MATCH(Flight-(origin)->Airport)
+            AND Airport.Name = a.Name) as Total
 FROM Airport a) as AirportStatistics
 WHERE Total > 0
 ORDER BY Percentage DESC
